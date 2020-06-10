@@ -28,7 +28,7 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { deck: generateDeck(), pickedCards: [] };
+    this.state = { deck: generateDeck(), pickedCards: [], hasWon: false };
   }
 
   pickCard = (cardIndex) => {
@@ -56,6 +56,22 @@ class App extends Component {
       newPickedCards = [];
     }
     this.setState({ deck: newDeck, pickedCards: newPickedCards });
+    this.checkWin(newDeck);
+  };
+
+  checkWin = (deck) => {
+    var filteredDeck = deck.filter((card) => {
+      return card.isFlipped;
+    });
+    if (filteredDeck.length === 16) {
+      this.setState({ hasWon: true }, () => {
+        console.log(this.state.hasWon);
+      });
+    }
+  };
+
+  resetGame = () => {
+    this.setState({ deck: generateDeck(), pickedCards: [], hasWon: false });
   };
 
   unflipCards = (card1Index, card2Index) => {
@@ -99,6 +115,13 @@ class App extends Component {
         <div>{cardsJSX.slice(4, 8)}</div>
         <div>{cardsJSX.slice(8, 12)}</div>
         <div>{cardsJSX.slice(12, 16)}</div>
+        <div>
+          {this.state.hasWon && (
+            <button type="button" onClick={this.resetGame}>
+              Reset Game
+            </button>
+          )}
+        </div>
       </div>
     );
   }
